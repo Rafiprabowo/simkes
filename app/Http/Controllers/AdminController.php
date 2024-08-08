@@ -32,7 +32,12 @@ class AdminController extends Controller
     })
     ->with('user') // Assuming you have a user relationship on the Doctor model
     ->get();
-        $employees = Employee::with('user')->get();
+        $employees = Employee::join('users', 'employees.user_id', '=', 'users.id')
+                    ->orderBy('users.first_name')
+                    ->orderBy('users.last_name')
+                    ->with('user')
+                    ->get();
+
         return view('content.admin.buat_check_up_pegawai', compact('doctors', 'employees'));
     }
 

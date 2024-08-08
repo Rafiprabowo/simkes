@@ -27,17 +27,13 @@
                     </ul>
                 </div>
           @endif
-            <div class="d-flex">
-                <div class="mb-3">
-                <a href="{{route('obat.create')}}" class="btn btn-primary">Tambah Obat</a>
-            </div>
-            <div class="mx-3">
+            <div class="mb-3">
             <a href="{{route('apoteker.dashboard')}}" class="btn btn-secondary">Kembali</a>
         </div>
             </div>
                 <div class="card">
                   <div class="card-header">
-                    <h3 class="card-title">Data Kategori obat</h3>
+                    <h3 class="card-title">Data obat</h3>
                   </div>
                   <div class="card-body border-bottom py-3">
                     <div class="d-flex">
@@ -64,9 +60,6 @@
                           <th>Nama Obat</th>
                           <th>Kategori Obat</th>
                             <th>Deskripsi Obat</th>
-                          <th>Stok</th>
-                            <th>Satuan</th>
-                            <th>Aksi</th>
                         </tr>
                       </thead>
 
@@ -77,20 +70,6 @@
                               <td>{{$medicine->name}}</td>
                               <td>{{$medicine->categories->name}}</td>
                               <td>{{$medicine->description}}</td>
-                              <td>{{$medicine->stock}}</td>
-                              <td>{{$medicine->satuan}}</td>
-                              <td>
-                                  <div class="d-flex justify-content-start">
-                                      <a href="" class="btn btn-primary mx-2">Lihat</a>
-                                  <a href="{{ route('obat.edit', $medicine->id) }}" class="btn btn-secondary mx-2">Ubah</a>
-
-                                         <form action="{{ route('obat.destroy', $medicine->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus obat ini?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger mx-2">Hapus</button>
-                                        </form>
-                                  </div>
-                              </td>
                           </tr>
                       @empty
                           <tr>

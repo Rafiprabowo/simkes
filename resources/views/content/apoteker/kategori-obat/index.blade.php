@@ -27,17 +27,13 @@
                     </ul>
                 </div>
           @endif
-            <div class="d-flex">
-                <div class="mb-3">
-                <a href="{{route('kategori-obat.create')}}" class="btn btn-primary">Tambah Kategori Obat</a>
-            </div>
-            <div class="mx-3">
+
+            <div class="mb-3">
             <a href="{{route('apoteker.dashboard')}}" class="btn btn-secondary">Kembali</a>
         </div>
-            </div>
-                <div class="card">
+            <div class="card">
                   <div class="card-header">
-                    <h3 class="card-title">Data Kategori obat</h3>
+                    <h3 class="card-title">Data Kategori Obat</h3>
                   </div>
                   <div class="card-body border-bottom py-3">
                     <div class="d-flex">
@@ -47,43 +43,38 @@
                           <input type="text" class="form-control form-control-sm" value="{{$categories->total()}}" size="3" aria-label="Invoices count">
                         </div>
                         data
-                      </div>
                     </div>
+                        <div class="ms-auto text-muted">
+                            Search:
+                            <div class="ms-2 d-inline-block">
+                                <form action="{{ route('medicine-category.search') }}" method="GET" class="d-flex">  @csrf
+                                    <input name="name" type="text" class="form-control mx-2" placeholder="Cari Kategori">
+                                    <button class="btn btn-primary mx-1" type="submit">Cari</button>
+                                </form>
+                            </div>
+                        </div>
                   </div>
                   <div class="table-responsive">
-                    <table class="table card-table table-vcenter text-nowrap datatable">
+                    <table class="table card-table table-vcenter text-nowrap datatable" id="category-table">
                       <thead>
                         <tr>
                           <th>No</th>
                           <th>Nama Kategori</th>
                           <th>Deskripsi Kategori</th>
-                          <th>Aksi</th>
                         </tr>
                       </thead>
-
                       <tbody>
-                      @forelse($categories as $index => $medicineCategory)
-                          <tr>
-                              <td>{{$index + 1}}</td>
-                              <td>{{$medicineCategory->name}}</td>
-                              <td>{{$medicineCategory->description}}</td>
-                              <td>
-                                  <div class="d-flex justify-content-start">
-                                      <a href="" class="btn btn-primary mx-2">Lihat</a>
-                                      <a href="{{route('kategori-obat.edit', $medicineCategory->id)}}" class="btn btn-secondary mx-2">Ubah</a>
-                                      <form action="{{ route('kategori-obat.destroy', $medicineCategory->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus kategori ini?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger mx-2">Hapus</button>
-                                        </form>
-                                  </div>
-                              </td>
-                          </tr>
-                      @empty
-                          <tr>
-                              <td>Tidak ada data yang tersedia</td>
-                          </tr>
-                      @endforelse
+                        @forelse($categories as $index => $medicineCategory)
+                            <tr>
+                                <td>{{$index + 1}}</td>
+                                <td>{{$medicineCategory->name}}</td>
+                                <td>{{$medicineCategory->description}}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="3">Tidak ada data yang tersedia</td>
+                            </tr>
+                        @endforelse
                       </tbody>
                     </table>
                   </div>
@@ -96,4 +87,6 @@
 
                 </div>
               </div>
+
+
 @endsection

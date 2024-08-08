@@ -363,6 +363,12 @@ Route::middleware(['auth', 'role:apoteker'])->group(function () {
         $medicines = $medicinesQuery->paginate(5);
         return view('content.apoteker.obat.index', compact('medicines'));
         })->name('medicine.search');
+        Route::get('/medicine-category/search', function (\Illuminate\Http\Request $request) {
+             $searchTerm = $request->get('name');
+
+    $categories = MedicineCategories::where('name', 'like', "%$searchTerm%")->paginate(10); // Adjust pagination as needed
+     return view('content.apoteker.kategori-obat.index', compact('categories'));
+        })->name('medicine-category.search');
     });
     });
 

@@ -49,12 +49,7 @@
                         <thead>
                         <tr>
                             <th>No</th>
-                            <th>Nama Depan</th>
-                            <th>Nama Belakang</th>
-                            <th>Username</th>
-                            <th>Email</th>
-                            <th>Alamat</th>
-                            <th>No Hp</th>
+                            <th>Nama </th>
                             <th>Jenis Kelamin</th>
                             <th>Jabatan</th>
                             <th>Jumlah Janji Temu</th>
@@ -66,12 +61,7 @@
                         @forelse($employees as $employee)
                             <tr>
                                 <td>{{ $loop->iteration + $i }}</td>
-                                <td>{{ $employee->user->first_name }}</td>
-                                <td>{{ $employee->user->last_name }}</td>
-                                <td>{{ $employee->user->username }}</td>
-                                <td>{{ $employee->user->email }}</td>
-                                <td>{{ $employee->user->address }}</td>
-                                <td>{{ $employee->user->phone }}</td>
+                                <td>{{ $employee->user->first_name. ' '. $employee->user->last_name  }} </td>
                                 <td>{{ $employee->gender }}</td>
                                 <td>{{ $employee->position }}</td>
                                 <td>{{ $employee->appointments_count }}</td>

@@ -219,14 +219,18 @@
             }
             },
             error: function (xhr) {
-                if(xhr.status === 422){
-                    let errors = xhr.responseJSON.message;
-                    let errorMessages = '';
-                    $.each(errors, function (key, value){
-                        errorMessages += value[0] + '\n';
-                    });
-                    alert(errorMessages);
-                } else {
+                 if(xhr.status === 422){
+            let errors = xhr.responseJSON.message;
+            let errorMessages = '';
+            if (typeof errors === 'string') {
+                errorMessages = errors;
+            } else {
+                $.each(errors, function(key, value) {
+                    errorMessages += value[0] + '\n';
+                });
+            }
+            alert(errorMessages);
+        } else {
                     console.log(xhr); // Log full error response
                     alert('Terjadi kesalahan sistem');
                 }

@@ -183,7 +183,6 @@
                                                                         <th>Kategori Obat</th>
                                                                         <th>Deskripsi Obat</th>
                                                                         <th>Satuan</th>
-                                                                        <th>Stok Obat</th>
                                                                         <th>Jumlah</th>
                                                                         <th></th>
                                                                     </tr>
@@ -196,7 +195,6 @@
                                                                             <td>{{$medicine->categories->name}}</td>
                                                                             <td class="medicine-description">{{$medicine->description}}</td>
                                                                             <td>{{$medicine->satuan }}</td>
-                                                                            <td>{{$medicine->stock}}</td>
                                                                             <td>
                                                                                 <input type="number" class="form-control jumlah-obat" data-id="{{$medicine->id}}" data-stock="{{$medicine->stock}}" min="1" max="{{$medicine->stock}}">
                                                                             </td>

@@ -127,52 +127,68 @@ public function createSessions($startTime, $endTime, $date, $interval = 20)
      * Store a newly created resource in storage.
      */
 
- public function store(Request $request)
-    {
-        $messages = [
-            'doctor_id.required' => 'Dokter tidak boleh kosong',
-            'schedule_id.required' => 'Tanggal & waktu tidak boleh kosong',
-        ];
-        // Validasi data yang diterima dari request
-        $validator = Validator::make($request->all(), [
-            'employee_id' => 'required|exists:employees,id',
-            'doctor_id' => 'required|exists:doctors,id',
-            'schedule_id' => 'required',
-            'note' => 'required',
-            'alergi_obat' => 'required'
-        ], $messages);
+public function store(Request $request)
+{
+    $messages = [
+    'employee_id.required' => 'ID pegawai tidak boleh kosong',
+    'employee_id.exists' => 'Pegawai tidak ditemukan',
+    'doctor_id.required' => 'Dokter tidak boleh kosong',
+    'doctor_id.exists' => 'Dokter tidak ditemukan',
+    'schedule_id.required' => 'Tanggal & waktu tidak boleh kosong',
+    'note.required' => 'Catatan tidak boleh kosong',
+    'alergi_obat.required' => 'Alergi obat tidak boleh kosong'
+];
 
-        if ($validator->fails()) {
-            return response()->json(['success' => false, 'message' => $validator->errors()], 422);
-        }
+// Validasi data yang diterima dari request
+$validator = Validator::make($request->all(), [
+    'employee_id' => 'required|exists:employees,id',
+    'doctor_id' => 'required|exists:doctors,id',
+    'schedule_id' => 'required',
+    'note' => 'required',
+    'alergi_obat' => 'required'
+], $messages);
 
-        $validated = $validator->validated();
-        $schedule = $validated['schedule_id'];
-        list($date, $start_time, $end_time) = explode('|', $schedule);
 
-        try {
-            DB::transaction(function () use ($validated, $date, $start_time, $end_time) {
-                // Menyimpan data janji temu ke dalam tabel appointments
-                $appointment = Appointment::create([
-                    'employee_id' => $validated['employee_id'],
-                    'doctor_id' => $validated['doctor_id'],
-                    'appointment_date' => $date,
-                    'appointment_start_time' => $start_time,
-                    'appointment_end_time' => $end_time,
-                    'note' => $validated['note'],
-                    'alergi_obat' => $validated['alergi_obat'],
-                    'status' => 'pending'  // status awal sebelum diubah
-                ]);
-
-                // Mengirimkan event jika diperlukan
-                event(new newAppointment($appointment));
-            });
-
-            return response()->json(['status' => 'success', 'message' => 'Janji temu berhasil dibuat']);
-        } catch (\Exception $exception) {
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()]);
-        }
+    if ($validator->fails()) {
+        return response()->json(['success' => false, 'message' => $validator->errors()], 422);
     }
+
+    $validated = $validator->validated();
+    $schedule = $validated['schedule_id'];
+    list($date, $start_time, $end_time) = explode('|', $schedule);
+
+    // Mengecek apakah sudah ada janji temu untuk employee pada hari ini
+    $existingAppointment = Appointment::where('employee_id', $validated['employee_id'])
+        ->whereDate('appointment_date', $date)
+        ->exists();
+
+    if ($existingAppointment) {
+        return response()->json(['status' => 'error', 'message' => 'Tidak dapat membuat janji temu lebih dari satu dalam sehari'], 422);
+    }
+
+    try {
+        DB::transaction(function () use ($validated, $date, $start_time, $end_time) {
+            // Menyimpan data janji temu ke dalam tabel appointments
+            $appointment = Appointment::create([
+                'employee_id' => $validated['employee_id'],
+                'doctor_id' => $validated['doctor_id'],
+                'appointment_date' => $date,
+                'appointment_start_time' => $start_time,
+                'appointment_end_time' => $end_time,
+                'note' => $validated['note'],
+                'alergi_obat' => $validated['alergi_obat'],
+                'status' => 'pending'  // status awal sebelum diubah
+            ]);
+
+            // Mengirimkan event jika diperlukan
+            event(new newAppointment($appointment));
+        });
+
+        return response()->json(['status' => 'success', 'message' => 'Janji temu berhasil dibuat']);
+    } catch (\Exception $exception) {
+        return response()->json(['status' => 'error', 'message' => $exception->getMessage()]);
+    }
+}
 
 
 

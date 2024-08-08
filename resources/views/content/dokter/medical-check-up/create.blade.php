@@ -313,34 +313,34 @@
             }
         });
 
-            function fetchAllEmployee (){
+            function fetchAllEmployee() {
                     $.ajax({
-                        url: '{{route('fetch-all-employee')}}',
+                        url: '{{ route('fetch-all-employee') }}',
                         type: 'GET',
                         dataType: 'json',
-                        success: function (response){
-                            console.log(response)
-                            if(response.success && response.data.length > 0){
-                                alert('Ada jadwal pemeriksaan mcu baru ')
-                                let selectEmployee = $('#select-employee')
-                                selectEmployee.empty()
-                                selectEmployee.html('<option value="">--Pilih Pegawai--</option>')
-                                $.each(response.data, function (key, employee) {
+                        success: function(response) {
+                            console.log(response);
+                            if (response.success && response.data.length > 0) {
+                                alert('Ada jadwal pemeriksaan MCU baru');
+                                let selectEmployee = $('#select-employee');
+                                selectEmployee.empty();
+                                selectEmployee.html('<option value="">--Pilih Pegawai--</option>');
+                                $.each(response.data, function(key, employee) {
                                     selectEmployee.append(
                                         `<option value="${employee.id}" data-mcuid="${employee.medical_check_up_id}">${employee.name}</option>`
-                                    )
+                                    );
                                 });
-                            }else {
-                                alert('Tidak ada jadwal check up pegawai ' )
+                            } else {
+                                alert('Tidak ada jadwal check up pegawai');
                             }
                         },
-                        error: function (){
+                        error: function(xhr, status, error) {
                             console.error('Request failed:', status, error);
-                            alert('Terjadi kesalahan sistem.');
-
+                            alert('Tidak ada jadwal check up pegawai.');
                         }
-                    })
+                    });
                 }
+
             function fetchGetEmployeeById(employeeId){
                     $.ajax({
                         url: '/api/fetch-employee/' + employeeId,

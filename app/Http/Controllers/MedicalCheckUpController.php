@@ -19,16 +19,17 @@ class MedicalCheckUpController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
-        //
-         $medicalCheckUps = MedicalCheckUp::with(['pemeriksaanMinors' => function ($query) {
-            $query->with(['nilaiRujukan', 'pemeriksaanMajor']);
-        }])
+        {
+            $medicalCheckUps = MedicalCheckUp::with(['pemeriksaanMinors' => function ($query) {
+                $query->with(['nilaiRujukan', 'pemeriksaanMajor']);
+            }])
             ->where('id_doctor', Auth::user()->doctor->id)
+            ->where('status', 1) // Menambahkan kondisi untuk hanya menampilkan status 1
             ->paginate(10);
-        return view('content.dokter.medical-check-up.index', compact('medicalCheckUps'));
 
-    }
+            return view('content.dokter.medical-check-up.index', compact('medicalCheckUps'));
+        }
+
 
     /**
      * Show the form for creating a new resource.
@@ -42,6 +43,7 @@ class MedicalCheckUpController extends Controller
         $medicalCheckUps = MedicalCheckUp::with('employee.user')
             ->where('id_doctor', $doctorId)
             ->where('status', 0)
+            ->where('date')
             ->get(); // tambahkan get() untuk mengeksekusi query
 
         return view('content.dokter.medical-check-up.create', compact('pemeriksaanMinors', 'medicalCheckUps'));

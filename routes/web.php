@@ -373,32 +373,39 @@ Route::middleware('auth')->group(function () {
      * /api/fetch-get-all-employee
      * /api/fetch-employee/{id}
      */
-    Route::get('/api/fetch-get-all-employee',function (){
-         try {
-            $doctorId = Auth::user()->doctor->id;
-               $medicalCheckUps = MedicalCheckUp::where('id_doctor', $doctorId)
+   Route::get('/api/fetch-get-all-employee', function () {
+    try {
+        $doctorId = Auth::user()->doctor->id;
+        $today = \Carbon\Carbon::today()->toDateString(); // Mendapatkan tanggal hari ini dalam format string
+
+        $medicalCheckUps = MedicalCheckUp::where('id_doctor', $doctorId)
             ->where('status', 0)
+            ->whereDate('date', $today) // Memfilter berdasarkan kolom 'date' yang sama dengan hari ini
             ->with('employee.user')
             ->get();
 
-            $formattedEmployees = $medicalCheckUps->map(function ($medicalCheckUp) {
-                return [
-                    'medical_check_up_id' => $medicalCheckUp->id,
-                    'id' => $medicalCheckUp->employee->id,
-                    'name' => $medicalCheckUp->employee->user->first_name . ' ' . $medicalCheckUp->employee->user->last_name,
-                    'address' => $medicalCheckUp->employee->user->address,
-                    'phone' => $medicalCheckUp->employee->user->phone,
-                    'position' => $medicalCheckUp->employee->position,
-                    'gender' => $medicalCheckUp->employee->gender,
-                    'age' => $medicalCheckUp->employee->age,
-                ];
-            });
-
-            return response()->json(['success' => true, 'data' => $formattedEmployees]);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        if ($medicalCheckUps->isEmpty()) {
+            return response()->json(['success' => false, 'message' => 'Tidak ada jadwal MCU pegawai untuk hari ini'], 404);
         }
-    })->name('fetch-all-employee');
+
+        $formattedEmployees = $medicalCheckUps->map(function ($medicalCheckUp) {
+            return [
+                'medical_check_up_id' => $medicalCheckUp->id,
+                'id' => $medicalCheckUp->employee->id,
+                'name' => $medicalCheckUp->employee->user->first_name . ' ' . $medicalCheckUp->employee->user->last_name,
+                'address' => $medicalCheckUp->employee->user->address,
+                'phone' => $medicalCheckUp->employee->user->phone,
+                'position' => $medicalCheckUp->employee->position,
+                'gender' => $medicalCheckUp->employee->gender,
+                'age' => $medicalCheckUp->employee->age,
+            ];
+        });
+
+        return response()->json(['success' => true, 'data' => $formattedEmployees]);
+    } catch (\Exception $e) {
+        return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+    }
+})->name('fetch-all-employee');
     Route::get('/api/fetch-employee/{id}', function ($id) {
         // Find the employee
         $employee = Employee::find($id);

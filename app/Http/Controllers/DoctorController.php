@@ -8,6 +8,7 @@ use App\Models\DoctorSchedule;
 use App\Models\DoctorSpecialization;
 use App\Models\MedicalCheckUp;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -23,12 +24,16 @@ class DoctorController extends Controller
         $notifications = $user->notifications;
         $unreadNotifications = $user->unreadNotifications;
 
-            $totalMedicalCheckUpMenunggu = MedicalCheckup::where('id_doctor', $user->doctor->id)->count();
+            $totalMedicalCheckUpMenunggu = MedicalCheckUp::where('id_doctor', $user->doctor->id)
+    ->whereDate('date', Carbon::today())
+    ->count();
         $totalAppointmentBelumDidiagnosa = Appointment::where('doctor_id', $user->doctor->id)
                                         ->where('diagnosed', 0)
+                                        ->whereDate('appointment_date', Carbon::today())
                                         ->count(); // Ensure you call count() to get the integer value
         $totalAppointmentMenunggu = Appointment::where('doctor_id', $user->doctor->id)
             ->where('status', 'pending')
+            ->whereDate('appointment_date', Carbon::today())
             ->count(); // Ensure you call count() to get the integer value
         $totalJadwal = DoctorSchedule::where('doctor_id', $user->doctor->id)->count();
 

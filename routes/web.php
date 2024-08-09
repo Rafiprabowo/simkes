@@ -373,6 +373,8 @@ Route::middleware(['auth', 'role:apoteker'])->group(function () {
     });
 
 Route::middleware('auth')->group(function () {
+    Route::post('/notifications/markAllAsRead', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead'])
+    ->name('notifications.markAllAsRead');
     Route::get('/notifications/mark-as-read/{id}', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
     /**
      * Api Fetch Employee

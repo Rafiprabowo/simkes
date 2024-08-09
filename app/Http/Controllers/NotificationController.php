@@ -16,4 +16,14 @@ class NotificationController extends Controller
         }
         return redirect()->back();
     }
+    public function markAllAsRead()
+    {
+        $user = Auth::user();
+
+        // Mark all unread notifications as read
+        $user->unreadNotifications->markAsRead();
+
+        // Redirect back with a success message
+        return redirect()->back()->with('success', 'Semua notifikasi telah dibaca.');
+    }
 }

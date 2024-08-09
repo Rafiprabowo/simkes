@@ -26,20 +26,22 @@ class AdminController extends Controller
         $user = Auth::user()->load('admin');
         return view('content.admin.profile', compact('user'));
     }
-    public function buatCheckUpPegawai(){
-       $doctors = Doctor::whereHas('speciality', function ($query) {
+   public function buatCheckUpPegawai(){
+    $doctors = Doctor::whereHas('speciality', function ($query) {
         $query->where('name', 'Dokter Umum');
     })
     ->with('user') // Assuming you have a user relationship on the Doctor model
     ->get();
-        $employees = Employee::join('users', 'employees.user_id', '=', 'users.id')
-                    ->orderBy('users.first_name')
-                    ->orderBy('users.last_name')
-                    ->with('user')
-                    ->get();
 
-        return view('content.admin.buat_check_up_pegawai', compact('doctors', 'employees'));
-    }
+    $employees = Employee::with('user')
+        ->get()
+        ->sortBy(function($employee) {
+            return $employee->user->first_name . ' ' . $employee->user->last_name;
+        });
+
+    return view('content.admin.buat_check_up_pegawai', compact('doctors', 'employees'));
+}
+
 
     public function updateProfile(Request $request){
         $user = Auth::user();

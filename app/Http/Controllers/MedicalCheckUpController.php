@@ -91,11 +91,20 @@ class MedicalCheckUpController extends Controller
     }
     public function storeMcu(Request $request){
           $validated = $request->validate([
-        'id_employees' => 'required|array',
-        'id_employees.*' => 'exists:employees,id',
-        'id_doctor' => 'required|exists:doctors,id',
-        'date' => 'required|date',
-    ]);
+    'id_employees' => 'required|array',
+    'id_employees.*' => 'exists:employees,id',
+    'id_doctor' => 'required|exists:doctors,id',
+    'date' => 'required|date',
+], [
+    'id_employees.required' => 'Pilih setidaknya satu pegawai untuk check-up.',
+    'id_employees.array' => 'Data pegawai tidak valid.',
+    'id_employees.*.exists' => 'Pegawai yang dipilih tidak ditemukan.',
+    'id_doctor.required' => 'Pilih dokter untuk check-up.',
+    'id_doctor.exists' => 'Dokter yang dipilih tidak ditemukan.',
+    'date.required' => 'Tanggal check-up harus diisi.',
+    'date.date' => 'Format tanggal check-up tidak valid.',
+]);
+
 
     $doctor = Doctor::find($validated['id_doctor']);
     $date = $validated['date'];
